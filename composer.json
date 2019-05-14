@@ -1,0 +1,21 @@
+{
+    "name": "itsoluce/my-exception",
+    "description": "exception class",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Renaud PLATEL",
+            "email": "renaud.platel@itsoluce.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.0.0",
+        "phpmailer/phpmailer": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "MyException": "src/"
+        }
+    }
+}
