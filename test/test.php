@@ -6,6 +6,4 @@ new MyException\MyException();
 
 echo 100/0;
 
-include_once("../MyConfig/MyException.Config.php");
-
 //incldadfq();

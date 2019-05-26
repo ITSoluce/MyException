@@ -6,6 +6,16 @@
  * and open the template in the editor.
  */
 
+$array = get_defined_vars();
+
 foreach (glob(__DIR__ . "/*.Config.php") as $filename) {
     require_once($filename);
+}
+
+$array2 = get_defined_vars();
+
+foreach($array2 AS $variable => $value) {
+    if ( (!isset($array[$variable])) && ($variable != 'array2')  && ($variable != 'array')  && ($variable != 'filename') ) {
+	define($variable,$value);
+    }
 }
