@@ -2,21 +2,24 @@
 namespace MyException;
 
 use ErrorException;
-//use Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-
-class MyException
+class MyException extends \Exception
 {
-	function __construct()
+	function __construct($Message = null)
 	{
-		// Afficher les erreurs et les avertissements
-		error_reporting(E_ALL);
-                ini_set('display_errors', 1);
-		set_error_handler( array( MyException::class, "log_error" ) ); 
-		set_exception_handler( array( MyException::class, "log_exception" ) );
-		register_shutdown_function( array( MyException::class, "check_for_fatal" ) );
+                if (is_null($Message)) {
+                        // Afficher les erreurs et les avertissements
+                        error_reporting(E_ALL);
+                        ini_set('display_errors', 1);
+                        set_error_handler( array( MyException::class, "log_error" ) ); 
+                        set_exception_handler( array( MyException::class, "log_exception" ) );
+                        register_shutdown_function( array( MyException::class, "check_for_fatal" ) );
+                }
+                else {
+                    self::log_exception($this,$Message);
+                }
 	}
 	
 	//Error handler, passes flow over the exception logger with new ErrorException.
@@ -43,18 +46,23 @@ class MyException
                 global $MyExceptionPHPMailPassword;
 
 		$ValueErreur = 0;
-		// a remplacer en fonction
-		
+
 		if (method_exists($e, 'getSeverity')) {
 			$ValueErreur = $e->getSeverity();
 			$NiveauErreur = self::friendly_severity($ValueErreur);
 
 		} else {
-			$NiveauErreur = "Exception (Fatal or Custom)";
+                    if (is_null($StringError)) {
+			$NiveauErreur = "Exception (Fatal Error)";
 			$ValueErreur = 1;
+                    }
+                    else {
+                        $NiveauErreur = "Exception (Custom Error)";
+			$ValueErreur = 0;
+                    }
+                        
 		}
-		//On ne traite pas les notices :
-		//if (true || (($Value != 8) && ($Value != 8192))) {
+
                 if (true) {
 			$erreurhtml = "<div style='text-align: left;'>";
 			$erreurhtml .= "<p style='color: rgb(190, 50, 50);'>Une exception a été levée :</p>";
@@ -70,12 +78,13 @@ class MyException
 				$erreurhtml .= htmlentities($StringError)."<br>";
                                 $erreurcli .= $StringError."\r\n";
 			}
-			$erreurhtml .= $e->getMessage();
-                        $erreurcli .= $e->getMessage()."\r\n";
+                        if (method_exists($e, 'getMessage')) {
+                            $erreurhtml .= $e->getMessage();
+                            $erreurcli .= $e->getMessage()."\r\n";
+                        }
 			$erreurhtml  .= "</td></tr>";
 			$erreurhtml  .= "<tr style='background-color:rgb(240,240,240);'><th>Fichier</th><td style='background-color:rgb(230,230,230);'>";
 			$tableau = $e->getTrace();
-			//debug($tableau);
 			$pile   = '';
 			$count  = 0;
 			$count2 = 0;
@@ -96,10 +105,6 @@ class MyException
                                                 if (isset($value["function"]) && isset($value["class"])) {
                                                         $pile .= " <b>Method</b> ".$value["class"].$value["type"].$value["function"]."\r\n";
                                                 }
-                                                /*
-                                                  if () {
-                                                  $pile .= " <b>Classe</b> ".$value["class"]."\r\n";
-                                                  } */
                                                 $compteur = 0;
                                                 if (isset($value["args"])) {
                                                         foreach ($value["args"] as $key2 => $value2) {
