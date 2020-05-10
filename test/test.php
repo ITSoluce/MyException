@@ -6,4 +6,9 @@ new MyException\MyException();
 
 echo 100/0;
 
-incldadfq();
+incldadfq((object)["hu"=>55,"hfd"=>54654,"dsf"=>454,fh=>46]);
+
+function incldadfq($fdfds)
+{
+	fdsqdfs();
+}
