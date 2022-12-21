@@ -195,7 +195,7 @@ class MyException extends \Exception
 	public static function check_for_fatal()
 	{
 		$error = error_get_last();
-		if ($error["type"] == E_ERROR) self::log_error($error["type"], $error["message"], $error["file"], $error["line"]);
+		if ($error["type"] ?? -1 == E_ERROR) self::log_error($error["type"], $error["message"], $error["file"], $error["line"]);
 	}
         
 	//Traduit le binvalue severity d'une exception.
